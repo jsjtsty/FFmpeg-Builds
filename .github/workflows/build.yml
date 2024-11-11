@@ -64,7 +64,7 @@ jobs:
           echo "name=ghcr.io/${IMG/ /-}" >> $GITHUB_OUTPUT
           echo "rawname=${IMG/ /-}" >> $GITHUB_OUTPUT
       - name: Stop Commands
-        run: T="$(echo -n ${{ github.token }} | sha256sum | head -c 64)" && echo -e "::add-mask::${T}\n::stop-commands::${T}"
+        run: T="$(echo -n ${{ secrets.GHCR_PAT }} | sha256sum | head -c 64)" && echo -e "::add-mask::${T}\n::stop-commands::${T}"
       - name: Build target base image
         uses: docker/build-push-action@v5
         with:
@@ -95,7 +95,7 @@ jobs:
         continue-on-error: true
         uses: BtbN/delete-untagged-ghcr-action@main
         with:
-          token: ${{ github.token }}
+          token: ${{ secrets.GHCR_PAT }}
           package_name: ${{ steps.imagename.outputs.rawname }}
           repository_owner: ${{ github.repository_owner }}
           repository: ${{ github.repository }}
@@ -124,7 +124,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ github.token }}
+          password: ${{ secrets.GHCR_PAT }}
       - name: Image Name
         id: imagename
         run: |
@@ -150,7 +150,7 @@ jobs:
         continue-on-error: true
         uses: BtbN/delete-untagged-ghcr-action@main
         with:
-          token: ${{ github.token }}
+          token: ${{ secrets.GHCR_PAT }}
           package_name: ${{ steps.imagename.outputs.rawname }}
           repository_owner: ${{ github.repository_owner }}
           repository: ${{ github.repository }}
@@ -180,7 +180,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ github.token }}
+          password: ${{ secrets.GHCR_PAT }}
       - name: Image Name
         id: imagename
         run: |
@@ -215,7 +215,7 @@ jobs:
         continue-on-error: true
         uses: BtbN/delete-untagged-ghcr-action@main
         with:
-          token: ${{ github.token }}
+          token: ${{ secrets.GHCR_PAT }}
           package_name: ${{ steps.imagename.outputs.rawname }}
           repository_owner: ${{ github.repository_owner }}
           repository: ${{ github.repository }}
@@ -241,7 +241,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ github.token }}
+          password: ${{ secrets.GHCR_PAT }}
       - name: Build ffmpeg
         run: |
           T="$(echo -n ${{ github.token }} | sha256sum | head -c 64)" && echo -e "::add-mask::${T}\n::stop-commands::${T}"
@@ -285,7 +285,7 @@ jobs:
           echo "tag_name=${TAGNAME}" >> $GITHUB_OUTPUT
           echo "rel_date=${RELDATE}" >> $GITHUB_OUTPUT
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ secrets.GHCR_PAT }}
       - name: Update Latest
         run: |
           set -xe
@@ -298,12 +298,12 @@ jobs:
           sleep 15
           gh release create "$TAGNAME" --target "master" --title "$NAME" latest_artifacts/*
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ secrets.GHCR_PAT }}
       - name: Update Wiki
         run: ./util/update_wiki.sh artifacts ${{ steps.create_release.outputs.tag_name }}
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ secrets.GHCR_PAT }}
       - name: Prune old releases
         run: ./util/prunetags.sh
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ secrets.GHCR_PAT }}
